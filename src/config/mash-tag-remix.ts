@@ -4,6 +4,7 @@ import chalk from "chalk";
 import { listSessions } from "../tmux/list-sessions.js";
 import { newSession } from "../tmux/new-session.js";
 import { switchClient } from "../tmux/switch-client.js";
+import { splitWindow } from "../tmux/split-window.js";
 
 const SESSION_NAME = "mash-tag-remix";
 
@@ -22,11 +23,18 @@ export function setupMashTagRemix() {
     }
   }
 
-  newSession({
+  const newSessionPane = newSession({
+    shellCommand: "nvim .",
     sessionName: SESSION_NAME,
     startDirectory: getMashTagRemixPath(),
     windowName: "remix-ide",
     background: true,
+    format: "#{pane_id}",
+  });
+  splitWindow({
+    orientation: "vertical",
+    size: "20%",
+    targetPane: newSessionPane.trim(),
   });
   switchClient({
     targetSession: SESSION_NAME,

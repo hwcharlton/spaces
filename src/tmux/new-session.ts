@@ -1,9 +1,5 @@
 import * as child_process from "node:child_process";
-
-type EnvVar = {
-  name: string;
-  value: string;
-};
+import { EnvVar } from "./types.js";
 
 type NewSessionOptions = {
   sessionName?: string;
@@ -12,9 +8,12 @@ type NewSessionOptions = {
   groupName?: string;
   environment?: EnvVar[];
   background?: boolean;
+  shellCommand?: string;
+  format?: string;
+  output?: boolean;
 };
 
-export function newSession(options?: NewSessionOptions) {
+export function newSession(options?: NewSessionOptions): string {
   const args: string[] = ["new-session"];
   if (options?.background) {
     args.push("-d");
@@ -36,5 +35,18 @@ export function newSession(options?: NewSessionOptions) {
       args.push("-e", `${envVar.name}=${envVar.value}`);
     }
   }
-  child_process.spawnSync("tmux", args);
+  if (options?.output === true) {
+    args.push("-P");
+  }
+  if (typeof options?.format === "string") {
+    if (options.output !== true) {
+      args.push("-P");
+    }
+    args.push("-F", options.format);
+  }
+  if (typeof options?.shellCommand === "string") {
+    args.push(options.shellCommand);
+  }
+  const commandResult = child_process.spawnSync("tmux", args);
+  return commandResult.stdout.toString();
 }
