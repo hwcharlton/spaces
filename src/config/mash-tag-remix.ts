@@ -9,6 +9,7 @@ import { selectPane } from "../tmux/select-pane.js";
 import { getWindows } from "../utils/get-windows.js";
 import { newWindow } from "../tmux/new-window.js";
 import { getPaneByName } from "../utils/get-pane-by-name.js";
+import { selectWindow } from "../tmux/select-window.js";
 
 const SESSION_NAME = "mash-tag-remix";
 const IDE_WINDOW_NAME = "remix-ide";
@@ -62,7 +63,13 @@ function openNvim() {
     targetWindow: `${SESSION_NAME}:${IDE_WINDOW_NAME}`,
   });
   if (nvimPane !== undefined) {
-    throw new Error("nvim is already open");
+    selectWindow({
+      targetWindow: `${SESSION_NAME}:${IDE_WINDOW_NAME}`,
+    });
+    selectPane({
+      targetPane: nvimPane.id,
+    });
+    return;
   }
   const nvimPaneId = splitWindow({
     startDirectory: getMashTagRemixPath(),
