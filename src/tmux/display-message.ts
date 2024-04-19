@@ -1,4 +1,5 @@
 import child_process from "node:child_process";
+import { extractCommandOutput } from "./utils.js";
 
 export type DisplayMessageOptions = {
   toStdout?: boolean;
@@ -34,6 +35,5 @@ export function displayMessage(options?: DisplayMessageOptions): string {
     args.push(options.message);
   }
 
-  const commandResult = child_process.spawnSync("tmux", args);
-  return commandResult.stdout.toString();
+  return extractCommandOutput(child_process.spawnSync("tmux", args));
 }

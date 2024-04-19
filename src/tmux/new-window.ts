@@ -1,5 +1,6 @@
 import child_process from "node:child_process";
 import { BeforeOrAfter, EnvVar } from "./types.js";
+import { extractCommandOutput } from "./utils.js";
 
 export type NewWindowOptions = {
   shellCommand?: string;
@@ -60,6 +61,5 @@ export function newWindow(options?: NewWindowOptions) {
   if (typeof options?.shellCommand === "string") {
     args.push(options.shellCommand);
   }
-  const commandResult = child_process.spawnSync("tmux", args);
-  return commandResult.stdout.toString();
+  return extractCommandOutput(child_process.spawnSync("tmux", args));
 }

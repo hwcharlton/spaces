@@ -1,5 +1,6 @@
 import child_process from "node:child_process";
 import { EnvVar, Orientation } from "./types.js";
+import { extractCommandOutput } from "./utils.js";
 
 export type SplitWindowOptions = {
   startDirectory?: string;
@@ -52,9 +53,5 @@ export function splitWindow(options?: SplitWindowOptions) {
   if (typeof options?.shellCommand === "string") {
     args.push(options.shellCommand);
   }
-  const result = child_process.spawnSync("tmux", args);
-  if (result.stderr.byteLength > 0) {
-    throw new Error(result.stderr.toString());
-  }
-  return result.stdout.toString();
+  return extractCommandOutput(child_process.spawnSync("tmux", args));
 }

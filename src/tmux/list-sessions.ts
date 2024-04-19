@@ -1,4 +1,5 @@
 import child_process from "node:child_process";
+import { extractCommandOutput } from "./utils.js";
 
 export type ListSessionOptions = {
   format?: string;
@@ -15,6 +16,5 @@ export function listSessions(options?: ListSessionOptions): string {
     args.push("-f", options.filter);
   }
 
-  const commandResponse = child_process.spawnSync("tmux", args);
-  return commandResponse.stdout.toString();
+  return extractCommandOutput(child_process.spawnSync("tmux", args));
 }

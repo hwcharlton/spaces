@@ -1,5 +1,6 @@
 import * as child_process from "node:child_process";
 import { EnvVar } from "./types.js";
+import { extractCommandOutput } from "./utils.js";
 
 type NewSessionOptions = {
   sessionName?: string;
@@ -47,6 +48,5 @@ export function newSession(options?: NewSessionOptions): string {
   if (typeof options?.shellCommand === "string") {
     args.push(options.shellCommand);
   }
-  const commandResult = child_process.spawnSync("tmux", args);
-  return commandResult.stdout.toString();
+  return extractCommandOutput(child_process.spawnSync("tmux", args));
 }
