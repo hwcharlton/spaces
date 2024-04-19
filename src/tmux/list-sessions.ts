@@ -1,24 +1,20 @@
 import child_process from "node:child_process";
 
-export type SessionInfo = {
-  sessionName: string;
+export type ListSessionOptions = {
+  format?: string;
+  filter?: string;
 };
 
-export function listSessions(): SessionInfo[] {
-  const commandResult = child_process.spawnSync("tmux", [
-    "list-sessions",
-    "-F",
-    "#{session_name}",
-  ]);
-  const sessionNames = commandResult.stdout
-    .toString()
-    .split("\n")
-    .filter((sessionName) => sessionName.length > 0);
-  const res: SessionInfo[] = [];
-  for (const sessionName of sessionNames) {
-    res.push({
-      sessionName,
-    });
+export function listSessions(options?: ListSessionOptions): string {
+  const args: string[] = ["list-sessions"];
+
+  if (typeof options?.format === "string") {
+    args.push("-F", options.format);
   }
-  return res;
+  if (typeof options?.filter === "string") {
+    args.push("-f", options.filter);
+  }
+
+  const commandResponse = child_process.spawnSync("tmux", args);
+  return commandResponse.stdout.toString();
 }

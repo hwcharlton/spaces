@@ -10,6 +10,8 @@ export type SplitWindowOptions = {
   orientation?: Orientation;
   full?: boolean;
   zoom?: boolean;
+  format?: string;
+  leftOrAbove?: boolean;
 };
 
 export function splitWindow(options?: SplitWindowOptions) {
@@ -40,6 +42,12 @@ export function splitWindow(options?: SplitWindowOptions) {
   }
   if (options?.zoom === true) {
     args.push("-Z");
+  }
+  if (typeof options?.format === "string") {
+    args.push("-P", "-F", options.format);
+  }
+  if (options?.leftOrAbove === true) {
+    args.push("-b");
   }
   if (typeof options?.shellCommand === "string") {
     args.push(options.shellCommand);
