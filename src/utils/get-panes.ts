@@ -23,9 +23,12 @@ export function parsePanes(paneLines: string[]): PaneInfo[] {
   const res: PaneInfo[] = [];
   for (const pane of paneLines) {
     const splitLine = pane.split("\t");
+    if (splitLine.length < 2) {
+      continue;
+    }
     res.push({
-      id: splitLine[0],
-      name: splitLine[1],
+      id: splitLine[0]!,
+      name: splitLine[1]!,
     });
   }
   return res;

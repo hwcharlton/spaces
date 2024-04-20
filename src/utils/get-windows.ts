@@ -15,9 +15,12 @@ export function getWindows(options?: GetWindowsOptions): WindowInfo[] {
   const res: WindowInfo[] = [];
   for (const window of listWindowsResult) {
     const splitLine = window.split("\t");
+    if (splitLine.length < 2) {
+      continue;
+    }
     res.push({
-      id: splitLine[0],
-      name: splitLine[1],
+      id: splitLine[0]!,
+      name: splitLine[1]!,
     });
   }
   return res;
