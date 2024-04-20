@@ -1,19 +1,21 @@
 import process from "node:process";
 import path from "node:path";
-import { splitWindow } from "../tmux/split-window.js";
 import { selectPane } from "../tmux/select-pane.js";
 import { getWindows } from "../utils/get-windows.js";
-import { newWindow } from "../tmux/new-window.js";
 import { getPaneByName } from "../utils/get-pane-by-name.js";
 import { selectWindow } from "../tmux/select-window.js";
 import { PaneConfig, SessionConfig, WindowConfig } from "../utils/types.js";
 import { startSession } from "../utils/start-session.js";
+import { openWindow } from "../utils/open-window.js";
+import { openPane } from "../utils/open-pane.js";
 
 const SESSION_NAME = "mash-tag-remix";
 const IDE_WINDOW_NAME = "remix-ide";
+const NVIM_EDITOR_PANE_NAME = "nvim-ide";
+const SHELL_PANE_NAME = "shell";
 const IDE_PANES: Record<string, PaneConfig> = {
   nvim: {
-    paneTitle: "nvim-ide",
+    paneTitle: NVIM_EDITOR_PANE_NAME,
     splitOrientation: "vertical",
     fullSize: true,
     leftOrAbove: true,
@@ -21,8 +23,15 @@ const IDE_PANES: Record<string, PaneConfig> = {
     startDirectory: getMashTagRemixPath(),
     size: "80%",
   },
+  server: {
+    paneTitle: "remix-server",
+    target: `${SESSION_NAME}:${IDE_WINDOW_NAME}.bottom`,
+    splitOrientation: "horizontal",
+    shellCommand: "npm run dev",
+    startDirectory: getMashTagRemixPath(),
+  },
   shell: {
-    paneTitle: "remix-shell",
+    paneTitle: SHELL_PANE_NAME,
     splitOrientation: "vertical",
     fullSize: true,
     startDirectory: getMashTagRemixPath(),
@@ -31,7 +40,7 @@ const IDE_PANES: Record<string, PaneConfig> = {
 };
 const WINDOWS: Record<string, WindowConfig> = {
   ide: {
-    windowName: "remix-ide",
+    windowName: IDE_WINDOW_NAME,
     defaultPane: "nvim",
     launchPanes: ["nvim", "shell"],
     panes: IDE_PANES,
@@ -39,7 +48,7 @@ const WINDOWS: Record<string, WindowConfig> = {
 };
 const SESSION: SessionConfig = {
   launchWindows: ["ide"],
-  sessionName: "mash-tag-remix",
+  sessionName: SESSION_NAME,
   windows: WINDOWS,
 };
 
@@ -50,77 +59,50 @@ export function setupMashTagRemix() {
 
 export const actions: Record<string, () => unknown> = {
   nvim: openNvim,
+  server: openRemixServer,
 };
 
 // Action functions
 
 function openNvim() {
-  if (createIdeWindow()) {
+  if (createIdeWindow(SESSION)) {
     return;
   }
-  const nvimPane = getPaneByName("nvim", {
-    targetWindow: `${SESSION_NAME}:${IDE_WINDOW_NAME}`,
-  });
+  const targetWindow = `${SESSION.sessionName}:${SESSION.windows["ide"]?.windowName}`;
+  const nvimPane = getPaneByName("nvim-ide", { targetWindow });
   if (nvimPane !== undefined) {
-    selectWindow({
-      targetWindow: `${SESSION_NAME}:${IDE_WINDOW_NAME}`,
-    });
-    selectPane({
-      targetPane: nvimPane.id,
-    });
+    selectWindow({ targetWindow });
+    selectPane({ targetPane: nvimPane.id });
     return;
   }
-  const nvimPaneId = splitWindow({
-    startDirectory: getMashTagRemixPath(),
-    format: "#{pane_id}",
-    full: true,
-    targetPane: `${SESSION_NAME}:${IDE_WINDOW_NAME}.bottom-left`,
-    shellCommand: "nvim .",
-    orientation: "vertical",
-    size: "80%",
-    leftOrAbove: true,
-  }).trim();
-  selectPane({
-    targetPane: nvimPaneId,
-    title: "nvim",
+  openPane(SESSION, {
+    window: "ide",
+    pane: "nvim",
+    target: `${targetWindow}.bottom-left`,
+    focus: true,
+  });
+}
+
+function openRemixServer() {
+  if (createIdeWindow(SESSION)) {
+    return;
+  }
+  openPane(SESSION, {
+    window: "ide",
+    pane: "server",
   });
 }
 
 // Utility functions
 
 /** Returns true if new window was created, and false if already present */
-function createIdeWindow(): boolean {
-  const windows = getWindows({ sessionName: SESSION_NAME });
+function createIdeWindow(session: SessionConfig): boolean {
+  const windows = getWindows({ sessionName: session.sessionName });
   if (windows.some((window) => window.name === IDE_WINDOW_NAME)) {
     return false;
   }
-  const newWindowPane = newWindow({
-    windowName: IDE_WINDOW_NAME,
-    startDirectory: getMashTagRemixPath(),
-    shellCommand: "nvim .",
-    format: "#{pane_id}",
-  });
-  selectPane({
-    targetPane: newWindowPane,
-    title: "nvim",
-  });
-  openIdeShell(newWindowPane);
+  openWindow(session, "ide");
   return true;
-}
-
-function openIdeShell(targetPane: string): string {
-  const shellPane = splitWindow({
-    startDirectory: getMashTagRemixPath(),
-    orientation: "vertical",
-    size: "20%",
-    targetPane: targetPane,
-    format: "#{pane_id}",
-  }).trim();
-  selectPane({
-    targetPane: shellPane,
-    title: "shell",
-  });
-  return shellPane;
 }
 
 function getMashTagRemixPath(): string {

@@ -1,9 +1,10 @@
 import { listSessions } from "../tmux/list-sessions.js";
 import { newSession } from "../tmux/new-session.js";
 import { selectPane } from "../tmux/select-pane.js";
-import { splitWindow } from "../tmux/split-window.js";
 import { switchClient } from "../tmux/switch-client.js";
-import { PaneConfig, SessionConfig, WindowConfig } from "./types.js";
+import { getSessionWindow, getWindowPane } from "./get-config.js";
+import { launchRemainingPanes } from "./open-window.js";
+import { SessionConfig, WindowConfig } from "./types.js";
 
 export function startSession(session: SessionConfig) {
   const runningSessions = listSessions({
@@ -39,7 +40,7 @@ function launchFirstWindow(session: SessionConfig, window: WindowConfig) {
   }
   let targetPaneId: string | undefined;
   const firstPane = getWindowPane(window, firstPaneName);
-  let currentPaneId = newSession({
+  const currentPaneId = newSession({
     background: true,
     sessionName: session.sessionName,
     startDirectory: firstPane.startDirectory,
@@ -55,55 +56,10 @@ function launchFirstWindow(session: SessionConfig, window: WindowConfig) {
     targetPane: currentPaneId,
     title: firstPane.paneTitle,
   });
-  for (let i = 1; i < window.launchPanes.length; i++) {
-    const paneName = window.launchPanes[i]!;
-    const pane = getWindowPane(window, paneName);
-    const newPaneId = splitWindow({
-      startDirectory: pane.startDirectory,
-      targetPane: pane.target || currentPaneId,
-      size: pane.size,
-      environment: pane.environment,
-      shellCommand: pane.shellCommand,
-      leftOrAbove: pane.leftOrAbove,
-      full: pane.fullSize,
-      orientation: pane.splitOrientation,
-      format: "#{pane_id}",
-    });
-    if (paneName === window.defaultPane) {
-      targetPaneId = newPaneId;
-    }
-    selectPane({
-      targetPane: newPaneId,
-      title: pane.paneTitle,
-    });
-    currentPaneId = newPaneId;
-  }
+  targetPaneId = launchRemainingPanes(window, currentPaneId) || targetPaneId;
   if (typeof targetPaneId === "string") {
     selectPane({
       targetPane: targetPaneId,
     });
   }
-}
-
-function getSessionWindow(
-  session: SessionConfig,
-  window: string,
-): WindowConfig {
-  const windowConfig = session.windows[window];
-  if (windowConfig === undefined) {
-    throw new Error(
-      `Could not find window config "${window}" for session config "${session.sessionName}"`,
-    );
-  }
-  return windowConfig;
-}
-
-function getWindowPane(window: WindowConfig, pane: string): PaneConfig {
-  const paneConfig = window.panes[pane];
-  if (paneConfig === undefined) {
-    throw new Error(
-      `Could not find pane config "${pane}" for window config "${window.windowName}"`,
-    );
-  }
-  return paneConfig;
 }
