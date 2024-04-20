@@ -34,3 +34,9 @@ export type PaneInfo = {
   name: string;
   id: string;
 };
+
+export type SessionChoice = {
+  name: string;
+  launcher: () => unknown;
+  actions: Record<string, () => unknown>;
+};
