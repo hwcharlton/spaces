@@ -1,16 +1,16 @@
 import process from "node:process";
 import path from "node:path";
-import { selectPane } from "../tmux/select-pane.js";
-import { getWindows } from "../utils/get-windows.js";
-import { getPaneByName } from "../utils/get-pane-by-name.js";
-import { selectWindow } from "../tmux/select-window.js";
 import { PaneConfig, SessionConfig, WindowConfig } from "../utils/types.js";
 import { startSession } from "../utils/start-session.js";
-import { openWindow } from "../utils/open-window.js";
+import { getPaneByName } from "../utils/get-pane-by-name.js";
+import { selectWindow } from "../tmux/select-window.js";
+import { selectPane } from "../tmux/select-pane.js";
 import { openPane } from "../utils/open-pane.js";
+import { getWindows } from "../utils/get-windows.js";
+import { openWindow } from "../utils/open-window.js";
 
-const SESSION_NAME = "mash-tag-remix";
-const IDE_WINDOW_NAME = "remix-ide";
+const SESSION_NAME = "mash-tag-strapi";
+const IDE_WINDOW_NAME = "strapi-ide";
 const NVIM_EDITOR_PANE_NAME = "ide-editor";
 const SHELL_PANE_NAME = "shell";
 const IDE_PANES: Record<string, PaneConfig> = {
@@ -20,21 +20,21 @@ const IDE_PANES: Record<string, PaneConfig> = {
     fullSize: true,
     leftOrAbove: true,
     shellCommand: "nvim .",
-    startDirectory: getMashTagRemixPath(),
+    startDirectory: getMashTagStrapiPath(),
     size: "80%",
   },
   server: {
-    paneTitle: "remix-server",
+    paneTitle: "strapi-server",
     target: `${SESSION_NAME}:${IDE_WINDOW_NAME}.bottom`,
     splitOrientation: "horizontal",
-    shellCommand: "npm run dev",
-    startDirectory: getMashTagRemixPath(),
+    shellCommand: "npm run develop",
+    startDirectory: getMashTagStrapiPath(),
   },
   shell: {
     paneTitle: SHELL_PANE_NAME,
     splitOrientation: "vertical",
     fullSize: true,
-    startDirectory: getMashTagRemixPath(),
+    startDirectory: getMashTagStrapiPath(),
     size: "20%",
   },
 };
@@ -52,13 +52,13 @@ const SESSION: SessionConfig = {
   windows: WINDOWS,
 };
 
-export function setupMashTagRemix() {
+export function setupMashTagStrapi() {
   startSession(SESSION);
 }
 
 export const actions: Record<string, () => unknown> = {
   nvim: openNvim,
-  server: openRemixServer,
+  server: openStrapiServer,
 };
 
 // Action functions
@@ -82,7 +82,7 @@ function openNvim() {
   });
 }
 
-function openRemixServer() {
+function openStrapiServer() {
   if (createIdeWindow(SESSION)) {
     return;
   }
@@ -104,10 +104,10 @@ function createIdeWindow(session: SessionConfig): boolean {
   return true;
 }
 
-function getMashTagRemixPath(): string {
+function getMashTagStrapiPath(): string {
   const home = process.env.HOME;
   if (home === undefined) {
-    throw new Error("$HOME is not set. Cannot get mash-tag-remix path.");
+    throw new Error("$HOME is not set. Cannot get mash-tag-strapi path.");
   }
-  return path.join(home, "Developer", "work", "mash-tag", "mash-tag-remix");
+  return path.join(home, "Developer", "work", "mash-tag", "mash-tag-strapi");
 }

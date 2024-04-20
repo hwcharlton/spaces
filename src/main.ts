@@ -6,6 +6,14 @@ import {
   setupMashTagRemix,
   actions as mashTagActions,
 } from "./config/mash-tag-remix.js";
+import {
+  setupMashTagStrapi,
+  actions as strapiActions,
+} from "./config/mash-tag-strapi.js";
+import {
+  setupMashTagCdk,
+  actions as cdkActions,
+} from "./config/mash-tag-cdk.js";
 import { displayMessage } from "./tmux/display-message.js";
 import { SessionChoice } from "./utils/types.js";
 import { MenuOption, displayMenu } from "./tmux/display-menu.js";
@@ -15,6 +23,16 @@ const SESSION_CHOICES: SessionChoice[] = [
     name: "mash-tag-remix",
     launcher: setupMashTagRemix,
     actions: mashTagActions,
+  },
+  {
+    name: "mash-tag-strapi",
+    launcher: setupMashTagStrapi,
+    actions: strapiActions,
+  },
+  {
+    name: "mash-tag-cdk",
+    launcher: setupMashTagCdk,
+    actions: cdkActions,
   },
 ];
 
