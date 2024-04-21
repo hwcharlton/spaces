@@ -13,7 +13,7 @@ import { EnvVar } from "../tmux/types.js";
 const ENVIRONMENT: EnvVar[] = [
   {
     name: "AWS_PROFILE",
-    value: "mash-tag",
+    value: "mash-tag-strapi",
   },
 ];
 const SESSION_NAME = "mash-tag-cdk";
