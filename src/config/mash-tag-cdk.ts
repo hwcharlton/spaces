@@ -68,7 +68,7 @@ function openNvim() {
     return;
   }
   const targetWindow = `${SESSION.sessionName}:${SESSION.windows["ide"]?.windowName}`;
-  const nvimPane = getPaneByName("nvim-ide", { targetWindow });
+  const nvimPane = getPaneByName(NVIM_EDITOR_PANE_NAME, { targetWindow });
   if (nvimPane !== undefined) {
     selectWindow({ targetWindow });
     selectPane({ targetPane: nvimPane.id });
