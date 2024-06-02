@@ -61,41 +61,60 @@ const parsedArgs = parseArgs({
   allowPositionals: true,
 });
 
-const chosenSession = parsedArgs.values.session || currentSession;
-const currentSessionOptions = getSessionOptions(chosenSession);
+const chosenSession = parsedArgs.values.session;
+const targetSessionChoice = getSessionOptions(chosenSession || currentSession);
+const firstPositional = parsedArgs.positionals[0];
 
 if (parsedArgs.values.action !== undefined) {
-  if (currentSessionOptions === undefined) {
+  if (targetSessionChoice === undefined) {
     throw new Error(
       `Cannot launch action "${parsedArgs.values.action}" for undefined session`,
     );
   }
-  performAction(currentSessionOptions, parsedArgs.values.action);
+  performAction(targetSessionChoice, parsedArgs.values.action);
+} else if (parsedArgs.values.session !== undefined) {
+  targetSessionChoice?.launcher();
 } else {
   const menuOption = parsedArgs.values.menu || "inquirer";
   if (menuOption === "inquirer") {
-    runPrompt(currentSessionOptions);
+    runPrompt(targetSessionChoice, firstPositional);
   } else if (menuOption === "tmux") {
-    runMenu(currentSessionOptions);
+    runMenu(targetSessionChoice, firstPositional);
   }
 }
 
-function runMenu(sessionOptions: SessionChoice | undefined) {
-  if (sessionOptions === undefined || sessionOptions.actions === undefined) {
-    throw new Error("tmux menu only implemented for action choice");
-  }
+if (chosenSession !== undefined && chosenSession !== currentSession) {
+  targetSessionChoice?.launcher();
+}
+
+function runMenu(
+  sessionOptions: SessionChoice | undefined,
+  firstArg: string | undefined,
+) {
   const menuOptions: MenuOption[] = [];
-  for (const actionKey of Object.keys(sessionOptions.actions)) {
-    menuOptions.push({
-      name: actionKey,
-      command: `run-shell "spaces --action ${actionKey}"`,
-    });
+  if (firstArg === "select" || sessionOptions === undefined) {
+    for (const sessionChoice of SESSION_CHOICES) {
+      menuOptions.push({
+        name: sessionChoice.name,
+        command: `run-shell "spaces --session ${sessionChoice.name}"`,
+      });
+    }
+  } else {
+    for (const actionKey of Object.keys(sessionOptions.actions)) {
+      menuOptions.push({
+        name: actionKey,
+        command: `run-shell "spaces --action ${actionKey}"`,
+      });
+    }
   }
   displayMenu({ menuOptions });
 }
 
-function runPrompt(sessionOptions: SessionChoice | undefined) {
-  if (sessionOptions === undefined) {
+function runPrompt(
+  sessionOptions: SessionChoice | undefined,
+  firstArg: string | undefined,
+) {
+  if (firstArg === "select" || sessionOptions === undefined) {
     launchPrompt();
   } else {
     actionPrompt(sessionOptions);
