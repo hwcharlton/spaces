@@ -1,3 +1,4 @@
+import { displayMessage } from "../tmux/display-message.js";
 import { selectPane } from "../tmux/select-pane.js";
 import { selectWindow } from "../tmux/select-window.js";
 import { splitWindow } from "../tmux/split-window.js";
@@ -18,6 +19,10 @@ export function openPane(
 ): string {
   const window = getSessionWindow(session, options.window);
   const pane = getWindowPane(window, options.pane);
+  const oldPaneId = displayMessage({
+    message: "#{pane_id}",
+    toStdout: true,
+  });
   const newPaneId = splitWindow({
     format: "#{pane_id}",
     full: pane.fullSize,
@@ -41,6 +46,10 @@ export function openPane(
     selectWindow({ targetWindow });
     selectPane({
       targetPane: newPaneId,
+    });
+  } else {
+    selectPane({
+      targetPane: oldPaneId,
     });
   }
   return newPaneId;
