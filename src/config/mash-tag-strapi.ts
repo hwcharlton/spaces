@@ -37,6 +37,13 @@ const IDE_PANES: Record<string, PaneConfig> = {
     startDirectory: getMashTagStrapiPath(),
     size: "20%",
   },
+  db: {
+    paneTitle: "strapi-db",
+    splitOrientation: "horizontal",
+    shellCommand: "sqlite3 -table ./.tmp/data.db",
+    target: "top-left",
+    startDirectory: getMashTagStrapiPath(),
+  },
 };
 const WINDOWS: Record<string, WindowConfig> = {
   ide: {
@@ -59,6 +66,7 @@ export function setupMashTagStrapi() {
 export const actions: Record<string, () => unknown> = {
   nvim: openNvim,
   server: openStrapiServer,
+  db: openDb,
 };
 
 // Action functions
@@ -68,7 +76,7 @@ function openNvim() {
     return;
   }
   const targetWindow = `${SESSION.sessionName}:${SESSION.windows["ide"]?.windowName}`;
-  const nvimPane = getPaneByName("nvim-ide", { targetWindow });
+  const nvimPane = getPaneByName(NVIM_EDITOR_PANE_NAME, { targetWindow });
   if (nvimPane !== undefined) {
     selectWindow({ targetWindow });
     selectPane({ targetPane: nvimPane.id });
@@ -89,6 +97,17 @@ function openStrapiServer() {
   openPane(SESSION, {
     window: "ide",
     pane: "server",
+  });
+}
+
+function openDb() {
+  if (createIdeWindow(SESSION)) {
+    return;
+  }
+  openPane(SESSION, {
+    window: "ide",
+    pane: "db",
+    focus: true,
   });
 }
 
