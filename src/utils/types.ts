@@ -33,6 +33,7 @@ export type WindowInfo = {
 export type PaneInfo = {
   name: string;
   id: string;
+  sessionName?: string;
 };
 
 export type SessionChoice = {

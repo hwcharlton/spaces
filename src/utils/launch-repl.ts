@@ -11,6 +11,13 @@ import { selectPane } from "../tmux/select-pane.js";
 import { selectWindow } from "../tmux/select-window.js";
 import { splitWindow } from "../tmux/split-window.js";
 import { switchClient } from "../tmux/switch-client.js";
+import { getSessionWindowConfig, getWindowPaneConfig } from "./get-config.js";
+import { getPaneByName } from "./get-pane-by-name.js";
+import { getPanes, parsePanes } from "./get-panes.js";
+import { getWindows } from "./get-windows.js";
+import { openPane } from "./open-pane.js";
+import { launchRemainingPanes, openWindow } from "./open-window.js";
+import { startSession } from "./start-session.js";
 
 type FunctionMap = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,7 +27,7 @@ type FunctionMap = {
 export function launchRepl() {
   const replInstance = repl.start({});
 
-  const replFunctions: FunctionMap = {
+  const tmuxFunctions: FunctionMap = {
     displayMenu,
     displayMessage,
     listPanes,
@@ -35,8 +42,26 @@ export function launchRepl() {
     switchClient,
   };
 
+  const utilFunctions: FunctionMap = {
+    getSessionWindowConfig,
+    getWindowPaneConfig,
+    getPaneByName,
+    getPanes,
+    parsePanes,
+    getWindows,
+    openPane,
+    openWindow,
+    launchRemainingPanes,
+    startSession,
+  };
+
   replInstance.context.tmux = {};
-  for (const [functionName, func] of Object.entries(replFunctions)) {
+  for (const [functionName, func] of Object.entries(tmuxFunctions)) {
     replInstance.context.tmux[functionName] = func;
+  }
+
+  replInstance.context.utils = {};
+  for (const [functionName, func] of Object.entries(utilFunctions)) {
+    replInstance.context.utils[functionName] = func;
   }
 }

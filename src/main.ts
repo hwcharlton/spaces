@@ -53,6 +53,7 @@ const parsedArgs = parseArgs({
       type: "string",
       short: "s",
     },
+    // Set prompting to inquirer or tmux (defaults to inquirer)
     menu: {
       type: "string",
       short: "m",

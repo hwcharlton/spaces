@@ -3,7 +3,7 @@ import { selectPane } from "../tmux/select-pane.js";
 import { selectWindow } from "../tmux/select-window.js";
 import { splitWindow } from "../tmux/split-window.js";
 import { switchClient } from "../tmux/switch-client.js";
-import { getSessionWindow, getWindowPane } from "./get-config.js";
+import { getSessionWindowConfig, getWindowPaneConfig } from "./get-config.js";
 import { SessionConfig } from "./types.js";
 
 export type OpenPaneOptions = {
@@ -17,8 +17,8 @@ export function openPane(
   session: SessionConfig,
   options: OpenPaneOptions,
 ): string {
-  const window = getSessionWindow(session, options.window);
-  const pane = getWindowPane(window, options.pane);
+  const window = getSessionWindowConfig(session, options.window);
+  const pane = getWindowPaneConfig(window, options.pane);
   const oldPaneId = displayMessage({
     message: "#{pane_id}",
     toStdout: true,

@@ -1,11 +1,11 @@
 import { newWindow } from "../tmux/new-window.js";
 import { selectPane } from "../tmux/select-pane.js";
 import { splitWindow } from "../tmux/split-window.js";
-import { getSessionWindow, getWindowPane } from "./get-config.js";
+import { getSessionWindowConfig, getWindowPaneConfig } from "./get-config.js";
 import { SessionConfig, WindowConfig } from "./types.js";
 
 export function openWindow(session: SessionConfig, windowName: string) {
-  const window = getSessionWindow(session, windowName);
+  const window = getSessionWindowConfig(session, windowName);
   const firstPaneName = window.launchPanes[0];
   if (firstPaneName === undefined) {
     throw new Error(
@@ -13,7 +13,7 @@ export function openWindow(session: SessionConfig, windowName: string) {
     );
   }
   let targetPaneId: string | undefined;
-  const firstPane = getWindowPane(window, firstPaneName);
+  const firstPane = getWindowPaneConfig(window, firstPaneName);
   const currentPaneId = newWindow({
     windowName: window.windowName,
     targetWindow: `${session.sessionName}:$`,
@@ -46,7 +46,7 @@ export function launchRemainingPanes(
   let targetPaneId: string | undefined;
   for (let i = 1; i < window.launchPanes.length; i++) {
     const paneName = window.launchPanes[i]!;
-    const pane = getWindowPane(window, paneName);
+    const pane = getWindowPaneConfig(window, paneName);
     const newPaneId = splitWindow({
       startDirectory: pane.startDirectory,
       targetPane: pane.target || currentPaneId,
