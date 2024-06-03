@@ -11,6 +11,10 @@ export type DisplayMessageOptions = {
   listAll?: boolean;
 };
 
+/**
+ * Set option 'message' to a string and 'toStdout' to true to retrieve the
+ * result of a tmux formatted string.
+ */
 export function displayMessage(options?: DisplayMessageOptions): string {
   const args = ["display-message"];
   if (options?.toStdout === true) {
