@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/main.ts",
+    "repl": "tsx src/repl.ts",
     "build": "rimraf dist && tsc -b ./tsconfig.json && chmod +x ./dist/main.js",
     "format": "prettier . --write",
     "lint": "eslint .",
