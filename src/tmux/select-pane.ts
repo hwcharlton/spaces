@@ -1,4 +1,4 @@
-import child_process from "node:child_process";
+import { runTmuxWithArgs } from "./utils.js";
 import { CardinalDirection, EnableChoice, SetOrClear } from "./types.js";
 
 export type SelectPaneOptions = {
@@ -51,5 +51,5 @@ export function selectPane(options?: SelectPaneOptions) {
   if (typeof options?.markPane === "string") {
     args.push(MARK_PANE_ARGS[options.markPane]);
   }
-  child_process.spawnSync("tmux", args);
+  runTmuxWithArgs(args);
 }

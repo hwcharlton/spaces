@@ -1,4 +1,4 @@
-import child_process from "node:child_process";
+import { runTmuxWithArgs } from "./utils.js";
 
 type WindowChoice = "last" | "next" | "previous";
 
@@ -25,5 +25,5 @@ export function selectWindow(options?: SelectWindowOptions) {
   if (options?.lastWindowIfSame === true) {
     args.push("-T");
   }
-  child_process.spawnSync("tmux", args);
+  runTmuxWithArgs(args);
 }

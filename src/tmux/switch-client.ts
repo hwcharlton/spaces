@@ -1,4 +1,4 @@
-import child_process from "node:child_process";
+import { runTmuxWithArgs } from "./utils.js";
 
 export type SwitchClientOptions = {
   targetClient?: string;
@@ -17,5 +17,5 @@ export function switchClient(options?: SwitchClientOptions) {
   if (typeof options?.keyTable === "string") {
     args.push("-T", options.keyTable);
   }
-  child_process.spawnSync("tmux", args);
+  runTmuxWithArgs(args);
 }

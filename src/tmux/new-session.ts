@@ -1,4 +1,4 @@
-import * as child_process from "node:child_process";
+import { runTmuxWithArgs } from "./utils.js";
 import { EnvVar } from "./types.js";
 import { extractCommandOutput } from "./utils.js";
 
@@ -48,5 +48,5 @@ export function newSession(options?: NewSessionOptions): string {
   if (typeof options?.shellCommand === "string") {
     args.push(options.shellCommand);
   }
-  return extractCommandOutput(child_process.spawnSync("tmux", args));
+  return extractCommandOutput(runTmuxWithArgs(args));
 }

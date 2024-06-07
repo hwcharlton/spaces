@@ -1,4 +1,4 @@
-import child_process from "node:child_process";
+import { runTmuxWithArgs } from "./utils.js";
 import { extractCommandOutput } from "./utils.js";
 
 export type ListPanesOptions = {
@@ -26,5 +26,5 @@ export function listPanes(options?: ListPanesOptions): string {
   if (options?.targetIsSession === true) {
     args.push("-s");
   }
-  return extractCommandOutput(child_process.spawnSync("tmux", args));
+  return extractCommandOutput(runTmuxWithArgs(args));
 }

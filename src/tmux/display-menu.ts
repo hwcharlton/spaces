@@ -1,4 +1,4 @@
-import child_process from "node:child_process";
+import { runTmuxWithArgs } from "./utils.js";
 
 export type MenuOption = {
   name?: string;
@@ -37,7 +37,7 @@ export function displayMenu(options: DisplayMenuOptions) {
     args.push("-O");
   }
   insertMenuOptions(args, options.menuOptions);
-  child_process.spawnSync("tmux", args);
+  runTmuxWithArgs(args);
 }
 
 function insertMenuOptions(args: string[], menuOptions: MenuOption[]) {

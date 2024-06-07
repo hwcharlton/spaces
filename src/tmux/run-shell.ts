@@ -1,4 +1,4 @@
-import child_process from "node:child_process";
+import { runTmuxWithArgs } from "./utils.js";
 
 export type RunShellOptions = {
   shellCommand?: string;
@@ -26,5 +26,5 @@ export function runShell(options?: RunShellOptions) {
   if (typeof options?.shellCommand === "string") {
     args.push(options.shellCommand);
   }
-  child_process.spawnSync("tmux", args);
+  runTmuxWithArgs(args);
 }

@@ -1,4 +1,4 @@
-import child_process from "node:child_process";
+import { runTmuxWithArgs } from "./utils.js";
 import { extractCommandOutput } from "./utils.js";
 
 export type ListWindowsOptions = {
@@ -23,5 +23,5 @@ export function listWindows(options?: ListWindowsOptions): string {
     args.push("-F", options.format);
   }
 
-  return extractCommandOutput(child_process.spawnSync("tmux", args));
+  return extractCommandOutput(runTmuxWithArgs(args));
 }
