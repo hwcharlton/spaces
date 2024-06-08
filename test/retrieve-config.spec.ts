@@ -1,8 +1,45 @@
 import { assert, beforeAll, test, vi, describe, afterAll } from "vitest";
 import { setConfigEnv } from "./helpers/set-env";
-import { getConfigFolder } from "../src/utils/retrieve-config";
+import {
+  getConfigFolder,
+  getWorkspacesFolder,
+  listConfigs,
+} from "../src/utils/retrieve-config";
 import path from "path";
-import { getSpacesRoot } from "./helpers/get-spaces-root";
+import {
+  SimpleConfigCleanupFunction,
+  generateSimpleConfigs,
+} from "./setup/generate-workspace-configs";
+
+const TEST_FILES = ["test.yAMl", "file.yaml.yaml", "-session.yaml-", ".yaml"];
+
+describe("lists workspace configurations", () => {
+  let folderCleanupCallback: SimpleConfigCleanupFunction | undefined;
+  beforeAll(() => {
+    setConfigEnv("test-temp");
+    folderCleanupCallback = generateSimpleConfigs(TEST_FILES);
+  });
+
+  afterAll(() => {
+    if (folderCleanupCallback) folderCleanupCallback();
+    vi.unstubAllEnvs();
+  });
+
+  test("retrieves list of config files", () => {
+    const workspaceFolder = getWorkspacesFolder();
+    const configs = listConfigs();
+    assert.sameMembers(
+      configs.map((config) => config.configName),
+      ["test", "file.yaml"],
+    );
+    assert.sameMembers(
+      configs.map((config) => config.configPath),
+      ["test.yAMl", "file.yaml.yaml"].map((filename) =>
+        path.join(workspaceFolder, filename),
+      ),
+    );
+  });
+});
 
 describe("without using test configuration environment", () => {
   test("finds default home config folder", ({ onTestFinished }) => {
@@ -52,8 +89,9 @@ describe("without using test configuration environment", () => {
 });
 
 describe("with using test configuration environment", () => {
+  let envFolder: string | undefined;
   beforeAll(() => {
-    setConfigEnv("default");
+    envFolder = setConfigEnv("default");
   });
 
   afterAll(() => {
@@ -62,9 +100,6 @@ describe("with using test configuration environment", () => {
 
   test("finds test config folder", () => {
     const configFolder = getConfigFolder();
-    assert.strictEqual(
-      configFolder,
-      path.join(getSpacesRoot(), "test", "test-config", "default"),
-    );
+    assert.strictEqual(configFolder, envFolder);
   });
 });
