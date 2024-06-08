@@ -1,4 +1,5 @@
 import { spawnSync, SpawnSyncReturns } from "node:child_process";
+import { throwTmuxError } from "../errors/throw-error.js";
 
 export function runTmuxWithArgs(args: string[]): SpawnSyncReturns<Buffer> {
   const socketName = process.env.SPACES_TMUX_SOCKET_NAME;
@@ -16,7 +17,7 @@ export function extractCommandOutput(
   commandOuput: SpawnSyncReturns<Buffer>,
 ): string {
   if (commandOuput.stderr.length > 0) {
-    throw new Error(commandOuput.stderr.toString());
+    throwTmuxError(commandOuput.stderr.toString());
   }
   return trimEndNewline(commandOuput.stdout.toString());
 }

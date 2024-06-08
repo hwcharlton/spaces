@@ -18,6 +18,8 @@ import { getWindows } from "./get-windows.js";
 import { openPane } from "./open-pane.js";
 import { launchRemainingPanes, openWindow } from "./open-window.js";
 import { startSession } from "./start-session.js";
+import { getConfigs } from "./retrieve-config.js";
+import { openWorkspace } from "./open-workspace.js";
 
 type FunctionMap = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,6 +55,8 @@ export function launchRepl() {
     openWindow,
     launchRemainingPanes,
     startSession,
+    getConfigs,
+    openWorkspace,
   };
 
   replInstance.context.tmux = {};

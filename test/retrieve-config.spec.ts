@@ -1,7 +1,8 @@
 import { assert, beforeAll, test, vi, describe, afterAll } from "vitest";
-import { setConfigEnv } from "./helpers/set-env";
+import { setTmpConfigEnv } from "./helpers/set-env";
 import {
   getConfigFolder,
+  getConfigs,
   getWorkspacesFolder,
   listConfigs,
 } from "../src/utils/retrieve-config";
@@ -11,12 +12,12 @@ import {
   generateSimpleConfigs,
 } from "./setup/generate-workspace-configs";
 
-const TEST_FILES = ["tEst.yAMl", "file.yaml.yaml", "-session.yaml-", ".yaml"];
+const TEST_FILES = ["tEst.yAMl", "file.yaml.yaml", "session.yaml ", ".yaml"];
 
 describe("lists workspace configurations", () => {
   let folderCleanupCallback: SimpleConfigCleanupFunction | undefined;
   beforeAll(() => {
-    setConfigEnv("test-temp");
+    setTmpConfigEnv("test-temp");
     folderCleanupCallback = generateSimpleConfigs(TEST_FILES);
   });
 
@@ -38,6 +39,15 @@ describe("lists workspace configurations", () => {
         path.join(workspaceFolder, filename),
       ),
     );
+  });
+
+  test("gets config data", () => {
+    const configs = getConfigs();
+    assert.hasAllKeys(configs, ["tEst", "file.yaml"]);
+    for (const config of Object.values(configs)) {
+      assert.containsAllKeys(config, ["session-name"]);
+      assert.match(config["session-name"] as string, /^session-\d+$/);
+    }
   });
 });
 
@@ -91,7 +101,7 @@ describe("without using test configuration environment", () => {
 describe("with using test configuration environment", () => {
   let envFolder: string | undefined;
   beforeAll(() => {
-    envFolder = setConfigEnv("default");
+    envFolder = setTmpConfigEnv("default");
   });
 
   afterAll(() => {

@@ -1,1 +1,25 @@
 session-name: typical-session
+root-directory: $HOME
+launch-windows:
+  - ide
+panes:
+  editor:
+    shell-command: vim .
+    targets:
+      - pane-name: shell
+        split-orientation: vertical
+        full-size: true
+        size: 80%
+        left-or-above: true
+  shell:
+    split-orientation: vertical
+    full-size: true
+windows:
+  ide:
+    title: ide-window
+    default-pane: vim
+    launch-panes:
+      - editor
+      - shell
+environment:
+  SPACES_ENV_TEST_FOO: bar

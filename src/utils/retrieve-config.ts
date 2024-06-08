@@ -1,12 +1,56 @@
 import path from "node:path";
 import fs from "node:fs";
+import YAML from "yaml";
+import { Orientation } from "../tmux/types.js";
 
-type ConfigFileInfo = {
+export type WorkspaceConfig = {
+  "session-name"?: string;
+  "root-directory"?: string;
+  "launch-windows"?: string[];
+  panes: Record<string, ConfigPane>;
+  windows: Record<string, ConfigWindow>;
+  environment: Record<string, string>;
+  [key: string]: unknown;
+};
+
+export type ConfigPane = {
+  "shell-command"?: string;
+  targets?: PaneTarget[];
+};
+
+export type ConfigWindow = {
+  title?: string;
+  "default-pane"?: string;
+  "launch-panes"?: string[];
+};
+
+export type PaneTarget = {
+  "pane-name"?: string;
+  "split-orientation"?: Orientation;
+  "full-size"?: boolean;
+  size?: string;
+  "left-or-above"?: boolean;
+};
+
+export type ConfigFileInfo = {
   configName: string;
   configPath: string;
 };
 
 const YAML_MATCHER = /\.yaml$/i;
+
+export function getConfigs(): Record<string, WorkspaceConfig> {
+  const configFiles = listConfigs();
+  const configs: Record<string, WorkspaceConfig> = {};
+  for (const configFile of configFiles) {
+    const fileContents = fs.readFileSync(configFile.configPath, {
+      encoding: "utf8",
+    });
+    const config = YAML.parse(fileContents);
+    configs[configFile.configName] = config;
+  }
+  return configs;
+}
 
 export function listConfigs(): ConfigFileInfo[] {
   const workspaceFolder = getWorkspacesFolder();
