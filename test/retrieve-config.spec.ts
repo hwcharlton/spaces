@@ -11,7 +11,7 @@ import {
   generateSimpleConfigs,
 } from "./setup/generate-workspace-configs";
 
-const TEST_FILES = ["test.yAMl", "file.yaml.yaml", "-session.yaml-", ".yaml"];
+const TEST_FILES = ["tEst.yAMl", "file.yaml.yaml", "-session.yaml-", ".yaml"];
 
 describe("lists workspace configurations", () => {
   let folderCleanupCallback: SimpleConfigCleanupFunction | undefined;
@@ -30,11 +30,11 @@ describe("lists workspace configurations", () => {
     const configs = listConfigs();
     assert.sameMembers(
       configs.map((config) => config.configName),
-      ["test", "file.yaml"],
+      ["tEst", "file.yaml"],
     );
     assert.sameMembers(
       configs.map((config) => config.configPath),
-      ["test.yAMl", "file.yaml.yaml"].map((filename) =>
+      ["tEst.yAMl", "file.yaml.yaml"].map((filename) =>
         path.join(workspaceFolder, filename),
       ),
     );
