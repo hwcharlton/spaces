@@ -5,7 +5,6 @@ export class SpacesError {
   public errorType: ErrorType;
 
   public constructor(message: string, type?: ErrorType) {
-    console.log("SPACES ERROR CONSTRUCTOR");
     this.message = message;
     this.errorType = type ?? "unclassified";
   }
