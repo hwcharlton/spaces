@@ -20,6 +20,7 @@ import { launchRemainingPanes, openWindow } from "./open-window.js";
 import { startSession } from "./start-session.js";
 import { getConfigs } from "./retrieve-config.js";
 import { openWorkspace } from "./open-workspace.js";
+import { sendKeys } from "../tmux/send-keys.js";
 
 type FunctionMap = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,6 +41,7 @@ export function launchRepl() {
     runShell,
     selectPane,
     selectWindow,
+    sendKeys,
     splitWindow,
     switchClient,
   };

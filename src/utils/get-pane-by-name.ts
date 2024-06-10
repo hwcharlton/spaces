@@ -12,7 +12,7 @@ export function getPaneByName(
 ): PaneInfo | undefined {
   const listPanesResult = listPanes({
     target: options?.targetWindow,
-    format: "#{pane_id}\t#{pane_title}",
+    format: "#{pane_id}\t#{pane_title}\t#{session_name}",
   })
     .trim()
     .split("\n");
