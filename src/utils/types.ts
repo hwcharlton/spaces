@@ -36,6 +36,11 @@ export type PaneInfo = {
   sessionName?: string;
 };
 
+export type SessionInfo = {
+  name: string;
+  id: string;
+};
+
 export type SessionChoice = {
   name: string;
   launcher: () => unknown;

@@ -1,4 +1,4 @@
-session-name: typical-session
+session-name: second-session
 root-directory: $HOME
 launch-windows:
   - ide
@@ -17,6 +17,12 @@ panes:
         size: 20%
         split-orientation: vertical
         full-size: true
+  another-shell:
+    split:
+      - target: top
+        size: 50%
+        split-orientation: horizontal
+        full-size: false
 windows:
   ide:
     title: ide-window
@@ -24,6 +30,7 @@ windows:
     launch-panes:
       - editor
       - shell
+      - another-shell
 environment:
   SPACES_ENV_TEST_FOO: bar
-  SPACES_ENV_TEST_TEST: value
+  SPACES_ENV_TEST_BAZ: qux

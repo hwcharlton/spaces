@@ -2,12 +2,12 @@ import process from "node:process";
 import path from "node:path";
 import { selectPane } from "../tmux/select-pane.js";
 import { getWindows } from "../utils/get-windows.js";
-import { getPaneByName } from "../utils/get-pane-by-name.js";
 import { selectWindow } from "../tmux/select-window.js";
 import { PaneConfig, SessionConfig, WindowConfig } from "../utils/types.js";
 import { startSession } from "../utils/start-session.js";
 import { openWindow } from "../utils/open-window.js";
 import { openPane } from "../utils/open-pane.js";
+import { getPaneByName } from "../utils/get-by-name.js";
 
 const SESSION_NAME = "mash-tag-remix";
 const IDE_WINDOW_NAME = "remix-ide";

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import { parseArgs } from "node:util";
 import process from "node:process";
 import inquirer from "inquirer";
 import {
@@ -17,6 +16,7 @@ import {
 import { displayMessage } from "./tmux/display-message.js";
 import { SessionChoice } from "./utils/types.js";
 import { MenuOption, displayMenu } from "./tmux/display-menu.js";
+import { parseSpacesArgs } from "./cli/parse-args.js";
 
 const SESSION_CHOICES: SessionChoice[] = [
   {
@@ -42,25 +42,7 @@ const currentSession = displayMessage({
 });
 
 const commandArgs = process.argv.slice(2);
-const parsedArgs = parseArgs({
-  args: commandArgs,
-  options: {
-    action: {
-      type: "string",
-      short: "a",
-    },
-    session: {
-      type: "string",
-      short: "s",
-    },
-    // Set prompting to inquirer or tmux (defaults to inquirer)
-    menu: {
-      type: "string",
-      short: "m",
-    },
-  },
-  allowPositionals: true,
-});
+const parsedArgs = parseSpacesArgs(commandArgs);
 
 const chosenSession = parsedArgs.values.session;
 const targetSessionChoice = getSessionOptions(chosenSession || currentSession);

@@ -4,6 +4,7 @@ import { splitWindow } from "../tmux/split-window.js";
 import { switchClient } from "../tmux/switch-client.js";
 import { EnvVar } from "../tmux/types.js";
 import { getServerStatus } from "./get-server-status.js";
+import { getSplit } from "./get-split.js";
 import {
   ConfigPane,
   ConfigWindow,
@@ -42,6 +43,9 @@ export function openWorkspace(config: WorkspaceConfig) {
     );
   }
   launchFirstWindow(config, firstWindowName);
+  switchClient({
+    targetSession: config["session-name"],
+  });
 }
 
 function launchFirstWindow(config: WorkspaceConfig, windowName: string) {
@@ -67,15 +71,17 @@ function launchFirstWindow(config: WorkspaceConfig, windowName: string) {
   );
 
   let targetPaneId: string | undefined;
-  const currentPaneId = newSession({
+  const [currentPaneId, windowId] = newSession({
     background: true,
     sessionName: config["session-name"],
     startDirectory: config["root-directory"],
     shellCommand: firstPaneConfig["shell-command"],
     windowName: windowName,
     environment: envVars,
-    format: "#{pane_id}",
-  });
+    format: "#{pane_id}\t#{window_id}",
+  })
+    .trim()
+    .split("\t");
 
   if (firstPaneName === windowConfig["default-pane"]) {
     targetPaneId = currentPaneId;
@@ -85,7 +91,8 @@ function launchFirstWindow(config: WorkspaceConfig, windowName: string) {
     title: firstPaneName,
   });
   targetPaneId =
-    launchRemainingPanes(config, windowName, currentPaneId) || targetPaneId;
+    launchRemainingPanes(config, windowName, currentPaneId!, windowId!) ||
+    targetPaneId;
   if (typeof targetPaneId === "string") {
     selectPane({
       targetPane: targetPaneId,
@@ -97,6 +104,7 @@ function launchRemainingPanes(
   config: WorkspaceConfig,
   windowName: string,
   firstPaneId: string,
+  windowId: string,
 ): string | undefined {
   let currentPaneId = firstPaneId;
   let targetPaneId: string | undefined;
@@ -113,11 +121,17 @@ function launchRemainingPanes(
       );
     }
     const paneConfig = getPaneConfig(config, paneName);
-    const newPaneId = splitWindow({
-      startDirectory: paneConfig["start-directory"],
-      targetPane: currentPaneId,
-      shellCommand: paneConfig["shell-command"],
-    });
+    let split = getSplit(config, paneConfig, windowId);
+    if (split === undefined) {
+      split = {
+        startDirectory: paneConfig["start-directory"],
+        shellCommand: paneConfig["shell-command"],
+      };
+    }
+    if (split.targetPane === undefined) {
+      split.targetPane = currentPaneId;
+    }
+    const newPaneId = splitWindow(split);
     if (paneName === windowConfig["default-pane"]) {
       targetPaneId = newPaneId;
     }

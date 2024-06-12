@@ -1,3 +1,4 @@
+import process from "node:process";
 import path from "node:path";
 import fs from "node:fs";
 import YAML from "yaml";
@@ -15,7 +16,8 @@ export type WorkspaceConfig = {
 
 export type ConfigPane = {
   "shell-command"?: string;
-  targets?: PaneTarget[];
+  split?: PaneTarget[];
+  "start-directory"?: string;
 };
 
 export type ConfigWindow = {
@@ -25,7 +27,8 @@ export type ConfigWindow = {
 };
 
 export type PaneTarget = {
-  "pane-name"?: string;
+  target?: string;
+  "target-title"?: string;
   "split-orientation"?: Orientation;
   "full-size"?: boolean;
   size?: string;

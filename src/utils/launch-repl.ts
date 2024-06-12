@@ -12,7 +12,6 @@ import { selectWindow } from "../tmux/select-window.js";
 import { splitWindow } from "../tmux/split-window.js";
 import { switchClient } from "../tmux/switch-client.js";
 import { getSessionWindowConfig, getWindowPaneConfig } from "./get-config.js";
-import { getPaneByName } from "./get-pane-by-name.js";
 import { getPanes, parsePanes } from "./get-panes.js";
 import { getWindows } from "./get-windows.js";
 import { openPane } from "./open-pane.js";
@@ -21,6 +20,7 @@ import { startSession } from "./start-session.js";
 import { getConfigs } from "./retrieve-config.js";
 import { openWorkspace } from "./open-workspace.js";
 import { sendKeys } from "../tmux/send-keys.js";
+import { getPaneByName } from "./get-by-name.js";
 
 type FunctionMap = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

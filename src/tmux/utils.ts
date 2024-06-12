@@ -1,3 +1,4 @@
+import process from "node:process";
 import { spawnSync, SpawnSyncReturns } from "node:child_process";
 import { throwTmuxError } from "../errors/throw-error.js";
 

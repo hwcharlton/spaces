@@ -2,13 +2,13 @@ import process from "node:process";
 import path from "node:path";
 import { PaneConfig, SessionConfig, WindowConfig } from "../utils/types.js";
 import { startSession } from "../utils/start-session.js";
-import { getPaneByName } from "../utils/get-pane-by-name.js";
 import { selectWindow } from "../tmux/select-window.js";
 import { selectPane } from "../tmux/select-pane.js";
 import { openPane } from "../utils/open-pane.js";
 import { getWindows } from "../utils/get-windows.js";
 import { openWindow } from "../utils/open-window.js";
 import { EnvVar } from "../tmux/types.js";
+import { getPaneByName } from "../utils/get-by-name.js";
 
 const ENVIRONMENT: EnvVar[] = [
   {
