@@ -30,7 +30,6 @@ windows:
     launch-panes:
       - editor
       - shell
-      - another-shell
 environment:
   SPACES_ENV_TEST_FOO: bar
   SPACES_ENV_TEST_BAZ: qux

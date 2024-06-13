@@ -17,6 +17,10 @@ panes:
         size: 20%
         split-orientation: vertical
         full-size: true
+  second-shell:
+    split:
+      - target: bottom
+        split-orientation: horizontal
 windows:
   ide:
     title: ide-window
