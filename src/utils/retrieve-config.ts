@@ -3,6 +3,7 @@ import path from "node:path";
 import fs from "node:fs";
 import YAML from "yaml";
 import { Orientation } from "../tmux/types.js";
+import { replaceEnvVars } from "./replace-env-vars.js";
 
 export type WorkspaceConfig = {
   "session-name"?: string;
@@ -50,6 +51,7 @@ export function getConfigs(): Record<string, WorkspaceConfig> {
       encoding: "utf8",
     });
     const config = YAML.parse(fileContents);
+    config["root-directory"] = replaceEnvVars(config["root-directory"] || "");
     configs[configFile.configName] = config;
   }
   return configs;

@@ -1,5 +1,5 @@
 session-name: second-session
-root-directory: $HOME
+root-directory: $HOME/project
 launch-windows:
   - ide
 panes:

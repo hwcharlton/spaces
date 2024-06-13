@@ -2,7 +2,7 @@ import { afterAll, assert, beforeAll, describe, test, vi } from "vitest";
 import { setConfigEnv, setSocketNameEnv } from "./helpers/set-env";
 import { openWorkspace } from "../src/utils/open-workspace";
 import { getConfigs } from "../src/utils/retrieve-config";
-import { getPaneByName } from "../src/utils/get-pane-by-name";
+import { getPaneByName } from "../src/utils/get-by-name";
 import { killServer } from "./helpers/kill-server";
 import { listPanes } from "../src/tmux/list-panes";
 import { checkEnvVar } from "./helpers/check-env-var";
