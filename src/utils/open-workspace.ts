@@ -131,6 +131,9 @@ function launchRemainingPanes(
     if (split.targetPane === undefined) {
       split.targetPane = currentPaneId;
     }
+    if (split.startDirectory === undefined) {
+      split.startDirectory = config["root-directory"];
+    }
     const newPaneId = splitWindow(split);
     if (paneName === windowConfig["default-pane"]) {
       targetPaneId = newPaneId;
