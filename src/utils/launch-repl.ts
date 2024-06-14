@@ -11,12 +11,6 @@ import { selectPane } from "../tmux/select-pane.js";
 import { selectWindow } from "../tmux/select-window.js";
 import { splitWindow } from "../tmux/split-window.js";
 import { switchClient } from "../tmux/switch-client.js";
-import { getSessionWindowConfig, getWindowPaneConfig } from "./get-config.js";
-import { getPanes, parsePanes } from "./get-panes.js";
-import { getWindows } from "./get-windows.js";
-import { openPane } from "./open-pane.js";
-import { launchRemainingPanes, openWindow } from "./open-window.js";
-import { startSession } from "./start-session.js";
 import { getConfigs } from "./retrieve-config.js";
 import { openWorkspace } from "./open-workspace.js";
 import { sendKeys } from "../tmux/send-keys.js";
@@ -47,16 +41,7 @@ export function launchRepl() {
   };
 
   const utilFunctions: FunctionMap = {
-    getSessionWindowConfig,
-    getWindowPaneConfig,
     getPaneByName,
-    getPanes,
-    parsePanes,
-    getWindows,
-    openPane,
-    openWindow,
-    launchRemainingPanes,
-    startSession,
     getConfigs,
     openWorkspace,
   };

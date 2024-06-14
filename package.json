@@ -8,7 +8,7 @@
     "start": "tsx src/main.ts",
     "new-api": "tsx src/new-api.ts",
     "repl": "tsx src/repl.ts",
-    "build": "rimraf dist && tsc -b ./tsconfig.json && chmod +x ./dist/main.js ./dist/new-api.js",
+    "build": "rimraf dist && tsc -b ./tsconfig.json && chmod +x ./dist/new-api.js",
     "test": "vitest",
     "format": "prettier . --write",
     "lint": "eslint .",
