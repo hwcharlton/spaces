@@ -12,6 +12,7 @@
     "test": "vitest",
     "format": "prettier . --write",
     "lint": "eslint .",
+    "typecheck": "tsx --noEmit",
     "git-hook-install": "simple-git-hooks"
   },
   "bin": {
