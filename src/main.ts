@@ -48,13 +48,13 @@ const chosenSession = parsedArgs.values.session;
 const targetSessionChoice = getSessionOptions(chosenSession || currentSession);
 const firstPositional = parsedArgs.positionals[0];
 
-if (parsedArgs.values.action !== undefined) {
+if (parsedArgs.values.pane !== undefined) {
   if (targetSessionChoice === undefined) {
     throw new Error(
-      `Cannot launch action "${parsedArgs.values.action}" for undefined session`,
+      `Cannot launch action "${parsedArgs.values.pane}" for undefined session`,
     );
   }
-  performAction(targetSessionChoice, parsedArgs.values.action);
+  performAction(targetSessionChoice, parsedArgs.values.pane);
 } else if (parsedArgs.values.session !== undefined) {
   targetSessionChoice?.launcher();
 } else {

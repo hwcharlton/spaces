@@ -64,11 +64,15 @@ function launchFirstWindow(config: WorkspaceConfig, windowName: string) {
 
   const firstPaneConfig = getPaneConfig(config, firstPaneName);
 
-  const envVars: EnvVar[] = Object.entries(config.environment).map(
-    ([name, value]) => {
-      return { name, value };
-    },
-  );
+  const envVars: EnvVar[] = [];
+  if (config.environment !== undefined) {
+    for (const [name, value] of Object.entries(config.environment)) {
+      envVars.push({
+        name,
+        value,
+      });
+    }
+  }
 
   let targetPaneId: string | undefined;
   const [currentPaneId, windowId] = newSession({
@@ -134,6 +138,7 @@ function launchRemainingPanes(
     if (split.startDirectory === undefined) {
       split.startDirectory = config["root-directory"];
     }
+    split.format = "#{pane_id}";
     const newPaneId = splitWindow(split);
     if (paneName === windowConfig["default-pane"]) {
       targetPaneId = newPaneId;
@@ -162,7 +167,10 @@ function getWindowConfig(
   return windowConfig;
 }
 
-function getPaneConfig(config: WorkspaceConfig, paneName: string): ConfigPane {
+export function getPaneConfig(
+  config: WorkspaceConfig,
+  paneName: string,
+): ConfigPane {
   const panes = config.panes;
   if (typeof panes !== "object" || panes === null) {
     throw Error("No panes configuration found in workspace config");

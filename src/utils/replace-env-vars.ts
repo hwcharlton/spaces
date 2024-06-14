@@ -1,3 +1,5 @@
+import process from "node:process";
+
 const LOWER_A_CHAR_CODE = "a".charCodeAt(0);
 const UPPER_A_CHAR_CODE = "A".charCodeAt(0);
 const UNDERSCORE_CHAR_CODE = "_".charCodeAt(0);

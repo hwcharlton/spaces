@@ -4,9 +4,9 @@ export function parseSpacesArgs(args: string[]) {
   const parsedArgs = parseArgs({
     args: args,
     options: {
-      action: {
+      pane: {
         type: "string",
-        short: "a",
+        short: "p",
       },
       session: {
         type: "string",
