@@ -8,14 +8,14 @@
     "start": "tsx src/main.ts",
     "new-api": "tsx src/new-api.ts",
     "repl": "tsx src/repl.ts",
-    "build": "rimraf dist && tsc -b ./tsconfig.json && chmod +x ./dist/new-api.js",
+    "build": "rimraf dist && tsc -b ./tsconfig.json && chmod +x ./dist/main.js",
     "test": "vitest",
     "format": "prettier . --write",
     "lint": "eslint .",
     "git-hook-install": "simple-git-hooks"
   },
   "bin": {
-    "spaces": "dist/new-api.js"
+    "spaces": "dist/main.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
