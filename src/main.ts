@@ -1,18 +1,14 @@
 #!/usr/bin/env node
 
 import process from "node:process";
-import { select } from "@inquirer/prompts";
-import { WorkspaceConfig, getConfigs } from "./utils/retrieve-config.js";
-import { getPaneConfig, openWorkspace } from "./utils/open-workspace.js";
+import { getConfigs } from "./utils/retrieve-config.js";
+import { openWorkspace } from "./utils/open-workspace.js";
 import { parseSpacesArgs } from "./cli/parse-args.js";
 import { displayMessage } from "./tmux/display-message.js";
 import { getUnopenedPanes } from "./utils/get-unopened-panes.js";
-import { getSplit } from "./utils/get-split.js";
-import { splitWindow } from "./tmux/split-window.js";
-import { selectPane } from "./tmux/select-pane.js";
-import { getSessionByName } from "./utils/get-by-name.js";
-import { listWindows } from "./tmux/list-windows.js";
 import { MenuOption, displayMenu } from "./tmux/display-menu.js";
+import { paneInquirerPrompt, sessionInquirerPrompt } from "./cli/inquirer.js";
+import { openPane } from "./utils/open-pane.js";
 
 type MenuType = "tmux" | "inquirer";
 
@@ -80,13 +76,7 @@ async function askPane(menuOption: MenuType) {
     return;
   }
   if (menuOption === "inquirer") {
-    const choice = await select({
-      message: "Which pane to open?",
-      choices: unopenedPanes.map((pane) => ({
-        value: pane,
-      })),
-    });
-    openPane(config, choice);
+    paneInquirerPrompt(config, unopenedPanes);
   } else {
     const menuOptions: MenuOption[] = [];
     for (const unopenedPane of unopenedPanes) {
@@ -101,17 +91,7 @@ async function askPane(menuOption: MenuType) {
 
 async function askSession(menuOption: MenuType) {
   if (menuOption === "inquirer") {
-    const choice = await select({
-      message: "Which session to start?",
-      choices: Object.keys(configs).map((configKey) => ({
-        name: configKey,
-        value: configs[configKey],
-      })),
-    });
-    if (choice === undefined) {
-      return;
-    }
-    openWorkspace(choice);
+    await sessionInquirerPrompt(configs);
   } else {
     const menuOptions: MenuOption[] = [];
     for (const session of Object.keys(configs)) {
@@ -122,33 +102,4 @@ async function askSession(menuOption: MenuType) {
     }
     displayMenu({ menuOptions });
   }
-}
-
-function openPane(config: WorkspaceConfig, paneChoice: string) {
-  const paneConfig = getPaneConfig(config, paneChoice);
-  // TODO: Handle undefined posibility.
-  const sessionId = getSessionByName(config["session-name"]!)!.id;
-  // TODO: Allow multiple windows
-  const windowId = listWindows({
-    targetSession: sessionId,
-    format: "#{window_id}",
-  })
-    .trim()
-    .split("\n")[0];
-  let split = getSplit(config, paneConfig, windowId!);
-  if (split === undefined) {
-    split = {
-      startDirectory: paneConfig["start-directory"],
-      shellCommand: paneConfig["shell-command"],
-    };
-  }
-  if (split.startDirectory === undefined) {
-    split.startDirectory = config["root-directory"];
-  }
-  split.format = "#{pane_id}";
-  const newPaneId = splitWindow(split);
-  selectPane({
-    targetPane: newPaneId,
-    title: paneChoice,
-  });
 }
