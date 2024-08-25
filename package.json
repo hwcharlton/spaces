@@ -37,9 +37,8 @@
     "pre-commit": "npx pretty-quick --staged --check && npx eslint ."
   },
   "dependencies": {
-    "@types/inquirer": "^9.0.7",
+    "@inquirer/prompts": "^5.3.8",
     "chalk": "^5.3.0",
-    "inquirer": "^9.2.19",
     "yaml": "^2.4.3"
   }
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+
 import process from "node:process";
-import inquirer from "inquirer";
+import { select } from "@inquirer/prompts";
 import { WorkspaceConfig, getConfigs } from "./utils/retrieve-config.js";
 import { getPaneConfig, openWorkspace } from "./utils/open-workspace.js";
 import { parseSpacesArgs } from "./cli/parse-args.js";
@@ -32,13 +33,13 @@ const firstPos = parsedArgs.positionals[0];
 
 if (firstPos === "select") {
   if (parsedArgs.positionals[1] === "session") {
-    askSession(menuOption);
+    await askSession(menuOption);
   } else if (parsedArgs.positionals[1] === "pane") {
-    askPane(menuOption);
+    await askPane(menuOption);
   } else if (chosenSession === currentSession) {
-    askPane(menuOption);
+    await askPane(menuOption);
   } else {
-    askSession(menuOption);
+    await askSession(menuOption);
   }
 } else if (firstPos === "open") {
   if (typeof parsedArgs.values.pane === "string") {
@@ -58,13 +59,13 @@ if (firstPos === "select") {
   }
 } else {
   if (Object.keys(configs).includes(currentSession)) {
-    askPane(menuOption);
+    await askPane(menuOption);
   } else {
-    askSession(menuOption);
+    await askSession(menuOption);
   }
 }
 
-function askPane(menuOption: MenuType) {
+async function askPane(menuOption: MenuType) {
   const targetSession = chosenSession || currentSession;
   if (!Object.keys(configs).includes(targetSession)) {
     throw new Error(`No configuration for session: ${targetSession}`);
@@ -79,18 +80,13 @@ function askPane(menuOption: MenuType) {
     return;
   }
   if (menuOption === "inquirer") {
-    inquirer
-      .prompt([
-        {
-          message: "Which pane to open?",
-          name: "paneChoice",
-          type: "list",
-          choices: unopenedPanes,
-        },
-      ])
-      .then((choices) => {
-        openPane(config, choices.paneChoice);
-      });
+    const choice = await select({
+      message: "Which pane to open?",
+      choices: unopenedPanes.map((pane) => ({
+        value: pane,
+      })),
+    });
+    openPane(config, choice);
   } else {
     const menuOptions: MenuOption[] = [];
     for (const unopenedPane of unopenedPanes) {
@@ -103,24 +99,19 @@ function askPane(menuOption: MenuType) {
   }
 }
 
-function askSession(menuOption: MenuType) {
+async function askSession(menuOption: MenuType) {
   if (menuOption === "inquirer") {
-    inquirer
-      .prompt([
-        {
-          message: "Which session to start?",
-          name: "sessionChoice",
-          type: "list",
-          choices: Object.keys(configs),
-        },
-      ])
-      .then((choices) => {
-        const chosenConfig = configs[choices.sessionChoice];
-        if (chosenConfig === undefined) {
-          return;
-        }
-        openWorkspace(chosenConfig);
-      });
+    const choice = await select({
+      message: "Which session to start?",
+      choices: Object.keys(configs).map((configKey) => ({
+        name: configKey,
+        value: configs[configKey],
+      })),
+    });
+    if (choice === undefined) {
+      return;
+    }
+    openWorkspace(choice);
   } else {
     const menuOptions: MenuOption[] = [];
     for (const session of Object.keys(configs)) {
