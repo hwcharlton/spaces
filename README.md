@@ -17,6 +17,64 @@ environmental variables, commands, and more. From inside of a session,
 `spaces` can be used to launch configured panes with shortcuts. The default
 placement of panes in windows may be configured freely.
 
+## Commands
+
+*Not yet implemented as below. Below is just a plan.*
+
+### Opening Sessions
+
+Open a named session:
+
+```
+spaces open [session-name]
+```
+
+Open prompt from which to choose a session:
+
+```
+spaces open
+```
+
+### Opening panes
+
+Open a named pane in current session:
+
+```
+spaces pane [pane-name]
+```
+
+Open pane in specified session:
+
+```
+spaces --session [session-name] pane [pane-name]
+```
+
+Open prompt from which to choose a pane:
+
+```
+spaces pane
+```
+
+### Focus Modes
+
+Set focus mode:
+
+```
+spaces focus [category-name]
+```
+
+Choose focus mode from prompt:
+
+```
+spaces focus
+```
+
+Clear focus mode:
+
+```
+spaces nofocus
+```
+
 ## Development
 
 Currently, spaces is being actively developed, and can be considered to be in a
