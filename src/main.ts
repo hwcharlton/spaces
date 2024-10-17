@@ -9,8 +9,9 @@ import { getUnopenedPanes } from "./utils/get-unopened-panes.js";
 import { MenuOption, displayMenu } from "./tmux/display-menu.js";
 import { paneInquirerPrompt, sessionInquirerPrompt } from "./cli/inquirer.js";
 import { openPane } from "./utils/open-pane.js";
+import { newWindow } from "./tmux/new-window.js";
 
-type MenuType = "tmux" | "inquirer";
+type MenuType = "tmux" | "inquirer" | "window";
 
 const configs = getConfigs();
 
@@ -22,8 +23,13 @@ const currentSession = displayMessage({
   message: "#{session_name}",
 });
 
-const menuOption: MenuType =
-  parsedArgs.values.menu === "tmux" ? "tmux" : "inquirer";
+let menuOption: MenuType = "inquirer";
+{
+  const menuChoice = parsedArgs.values.menu || "";
+  if (["tmux", "inquirer", "window"].includes(menuChoice)) {
+    menuOption = parsedArgs.values.menu as MenuType;
+  }
+}
 
 const firstPos = parsedArgs.positionals[0];
 
@@ -77,6 +83,10 @@ async function askPane(menuOption: MenuType) {
   }
   if (menuOption === "inquirer") {
     paneInquirerPrompt(config, unopenedPanes);
+  } else if (menuOption === "window") {
+    newWindow({
+      shellCommand: "spaces select pane",
+    });
   } else {
     const menuOptions: MenuOption[] = [];
     for (const unopenedPane of unopenedPanes) {
@@ -92,6 +102,10 @@ async function askPane(menuOption: MenuType) {
 async function askSession(menuOption: MenuType) {
   if (menuOption === "inquirer") {
     await sessionInquirerPrompt(configs);
+  } else if (menuOption === "window") {
+    newWindow({
+      shellCommand: "spaces select session",
+    });
   } else {
     const menuOptions: MenuOption[] = [];
     for (const session of Object.keys(configs)) {
